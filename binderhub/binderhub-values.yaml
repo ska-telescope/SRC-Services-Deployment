@@ -1,0 +1,97 @@
+values: |
+  jupyterhub:
+    cull:
+      # don't cull authenticated users
+      users: False
+    custom:
+      binderauth_enabled: true
+    # Secret information, secretToken for proxy
+    proxy:
+      secretToken: "9c21367b9ce281da7eee0ac205a136d33cd60e1dfc93d1e13068f80454c71959"
+    hub:
+      baseUrl: /jupyterhub/
+      # Configure authentication with external provider:
+      redirectToServer: false
+      services:
+        binder:
+          # Secret information, apiToken
+          apiToken: "2446e06009465c06044742341f413b28694051e589979f9ce62e417ab17136fb"
+          oauth_no_confirm: true
+          oauth_redirect_uri: "https://srcdev.skatelescope.org/binderhub/oauth_callback"
+          oauth_client_id: "binder-oauth-client-prod"
+      config:
+        GenericOAuthenticator:
+          login_service: "ESCAPE IAM"
+          client_id: "22811b3d-814c-4334-900e-fa42f23fd722"
+          client_secret: "AJ2j4zHRNwDfSfNrhPIQMjO0w73UQ_7awLh1mYeLVjopFzHF-XA8l8dEDuYuVMSraEGZ1CtpmDs3Do_V_LjBy3A"
+          oauth_callback_url: "https://srcdev.skatelescope.org/jupyterhub/hub/oauth_callback"
+          authorize_url: https://iam-escape.cloud.cnaf.infn.it/authorize
+          token_url: https://iam-escape.cloud.cnaf.infn.it/token
+          userdata_url: https://iam-escape.cloud.cnaf.infn.it/userinfo
+          userdata_method: GET
+          userdata_params: {'state': 'state'}
+          username_key: preferred_username
+        JupyterHub:
+          authenticator_class: generic-oauth
+      extraEnv:
+       #OAUTH_CLIENT_ID: 22811b3d-814c-4334-900e-fa42f23fd722
+       #OAUTH_CALLBACK_URL: https://srcdev.skatelescope.org/jupyterhub/hub/oauth_callback
+       #OAUTH_CLIENT_SECRET:
+       #   valueFrom:
+       #     secretKeyRef:
+       #       name: jupyter-iam-client
+       #       key: jupyter-iam-client-secret
+       # OAUTH2_AUTHORIZE_URL: https://iam-escape.cloud.cnaf.infn.it/authorize 
+       # OAUTH2_TOKEN_URL: https://iam-escape.cloud.cnaf.infn.it/token
+       # OAUTH2_USERDATA_URL: https://iam-escape.cloud.cnaf.infn.it/userinfo
+       # OAUTH2_USERNAME_KEY: "preferred_username"
+    singleuser:
+      # Make notebook servers aware of hub
+      cmd: jupyterhub-singleuser
+      # (Optional) Configure persistent storage
+      storage:
+        type: dynamic
+        extraLabels: {}
+        static:
+          pvcName:
+          subPath: "{username}"
+        capacity: 10Gi
+        homeMountPath: /home/jovyan/personal
+        dynamic:
+          storageClass: "rook-cephfs"
+          pvcNameTemplate: claim-{username}{servername}
+          volumeNameTemplate: volume-{username}{servername}
+          storageAccessModes: [ReadWriteOnce]      
+        extraVolumes:
+          - name: binderhub-shared-rw
+            persistentVolumeClaim:
+              claimName: binderhub-data-cephfs-rw-pvc
+        extraVolumeMounts:
+          - name: binderhub-shared-rw
+            mountPath: /home/jovyan/shared-workflows
+      #image:
+      #  name: jupyterhub/k8s-singleuser-sample
+      #  tag: '0.11.0'
+      #  pullPolicy: IfNotPresent
+      #  pullSecrets:
+      #   - "image-pull-secret"
+      profileList:
+      - display_name: "Default"
+        description: "The default image"
+        default: true
+      - display_name: "Jupyter data science notebook"
+        description: "data science env"
+        kubespawner_override:
+          image: jupyter/datascience-notebook:latest 
+  # BinderHub config
+  config:
+    BinderHub:
+      # Enable auth, configured in jupyterhub section
+      auth_enabled: true
+      use_registry: true
+      image_prefix: srcdev/binder-prod-
+      hub_url: https://srcdev.skatelescope.org/jupyterhub/
+      base_url: /binderhub/
+   
+  service:
+    type: NodePort
