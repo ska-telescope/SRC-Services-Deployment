@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: binder-jhub-ingress
+  namespace: binder-prod
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: 1000m
+spec:
+  rules:
+  - host: srcdev.skatelescope.org
+    http:
+      paths:
+      - path: /jupyterhub/
+        backend:
+          serviceName: proxy-public
+          servicePort: 80
