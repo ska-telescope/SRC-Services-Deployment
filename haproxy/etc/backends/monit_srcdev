@@ -1,0 +1,4 @@
+backend monit_srcdev
+    mode http
+    option forwardfor
+    server monit_srcdev 192.168.1.106:80

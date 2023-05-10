@@ -1,0 +1,4 @@
+backend argocd_srcdev
+    mode http
+    option forwardfor
+    server argocd_srcdev 192.168.1.106:80
