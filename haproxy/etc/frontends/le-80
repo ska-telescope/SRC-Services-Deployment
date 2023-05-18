@@ -1,0 +1,6 @@
+# Let's encrypt frontend if first acme challenge
+frontend fe
+    #bind *:80											# uncomment for ACME challenges
+    # Test URI to see if its a letsencrypt request
+    acl letsencrypt-acl path_beg /.well-known/acme-challenge/
+    use_backend letsencrypt-backend if letsencrypt-acl
