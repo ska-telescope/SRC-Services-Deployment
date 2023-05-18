@@ -1,0 +1,10 @@
+auth:
+  username: rucio
+  password: secret
+  database: rucio
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: csi-cinder-sc-delete
+    size: 250Gi

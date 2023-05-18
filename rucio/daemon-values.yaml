@@ -1,0 +1,241 @@
+abacusAccountCount: 1
+abacusRseCount: 1
+conveyorTransferSubmitterCount: 2 
+conveyorPollerCount: 2
+conveyorFinisherCount: 2
+hermesCount: 0
+hermes2Count: 0
+judgeCleanerCount: 1
+judgeEvaluatorCount: 1
+judgeInjectorCount: 1
+judgeRepairerCount: 1
+undertakerCount: 1
+reaperCount: 4
+transmogrifierCount: 1
+oauthManagerCount: 1
+
+image:
+  repository: 192.168.50.97:5000/rucio/rucio-daemons
+  tag: release-1.29.6-finisher-bulk-bodge-sdc3a-no-updated-collection-replica-update-2
+  pullPolicy: Always
+
+automaticRestart:
+  enabled: 1
+  image:
+    repository: bitnami/kubectl
+    tag: 1.18
+    pullPolicy: IfNotPresent
+  schedule: "15 1 * * *"
+
+monitoring:
+  enabled: false 
+  serviceMonitorEnabled: true
+  exporterPort: 8080
+  targetPort: 8080
+  interval: 30s
+  telemetryPath: /metrics
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+
+minReadySeconds: 5
+
+abacusAccount:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+abacusRse:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+reaper:
+  chunkSize: 500
+  greedy: 1
+  threads: 1 
+  sleepTime: 15
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "100m"
+
+undertaker:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "25m"
+    limits:
+      memory: "256Mi"
+      cpu: "50m"
+
+conveyorTransferSubmitter:
+  threads: 2 
+  sleepTime: 10
+  activities: "'Functional Test' 'User Subscriptions'"
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+conveyorPoller:
+  activities: "'Functional Test' 'User Subscriptions'"
+  threads: 2 
+  sleepTime: 10
+  olderThan: 0
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+conveyorFinisher:
+  threads: 1 
+  sleepTime: 1
+  bulk: 100
+  dbBulk: 1000
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+hermes2:
+  threads: 1
+  bulk: 200
+  brokerTimeout: 3
+  resources:
+    limits:
+      memory: "200Mi"
+      cpu: "700m"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+
+judgeCleaner:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+judgeEvaluator:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+
+judgeRepairer:
+  threads: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+
+
+judgeInjector:
+  threads: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+ftsRenewal:
+  enabled: 0
+  image:
+    repository: /rucio/fts-cron-ska
+    tag: latest
+    pullPolicy: IfNotPresent
+  vo: "skatelescope.eu"
+  voms: "skatelescope.eu"
+  servers: "https://fts3-pilot.cern.ch:8446,https://fts3-test.gridpp.rl.ac.uk:8446"
+
+oauthManager:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "200Mi"
+      cpu: "700m"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+
+config:
+  oidc:
+    idpsecrets: "/etc/idpsecrets/idpsecrets.json"
+    admin_issuer: "escape"
+    expected_audience: "https://wlcg.cern.ch/jwt/v1/any"
+  database:
+    default: postgresql://rucio:secret@rucio-restore-db-test-postgresql/rucio
+    schema: test
+  messaging_hermes2:
+    elastic_endpoint: https://srcdev.skatelescope.org/rucio-dev/monit/elastic/hermes2/_bulk/
+  
+  conveyor:
+    scheme: "gsiftp,root,https,davs"
+    transfertool: "fts3"
+    ftshosts: "https://fts3-pilot.cern.ch:8446,https://fts3-test.gridpp.rl.ac.uk:8446"
+    cacert: "/opt/certs/ca.pem"
+    usercert: "/opt/proxy/x509up"
+    allow_user_oidc_tokens: "False"
+    request_oidc_scope: "openid profile offline_access wlcg.groups storage.read:/ storage.create:/ storage.modify:/"
+    request_oidc_audience: "fts https://wlcg.cern.ch/jwt/v1/any"
+    poller_oidc_account: "root"
+
+  reaper:
+    oidc_account: "root"
+    oidc_scope: "profile offline_access wlcg.groups storage.read:/ storage.create:/ storage.modify:/"
+    oidc_audience: "https://wlcg.cern.ch/jwt/v1/any"
+
+  policy:
+    permission: "generic"
+    schema: "generic"
+    lfn2pfn_algorithm_default: "hash"
+
+  monitor:
+    enable_metrics: "true"
+
+additionalSecrets: 
+  idpsecrets:
+    secretName: idpsecrets
+    mountPath: /etc/idpsecrets/idpsecrets.json
+    subPath: idpsecrets.json
+
+optional_config:
+  DAVIX_DISABLE_SESSION_CACHING: true

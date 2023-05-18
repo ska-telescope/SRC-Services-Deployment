@@ -1,0 +1,36 @@
+protocol: http
+
+createCert: false
+
+esConfig:
+  elasticsearch.yml: |
+    xpack.security.enabled: false                 # enable authentication (requires http ssl to be set)
+    xpack.security.http.ssl.enabled: false        # enable ssl for http 
+    xpack.security.transport.ssl.enabled: false   # enable ssl for transport
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+    - host: monit.srcdev.skao.int
+      paths: 
+        - path: /elastic(/|$)(.*)
+
+reindex:
+  remote:
+    whitelist:
+      - "srcdev.skatelescope.org:443"
+
+secret:
+  enabled: true                                   # use following creds (rather than secret) if xpack.security.enable is set
+  password: C7XUnyZuYfd9ECtioHFhntLP6
+
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "csi-cinder-sc-delete"
+  resources:
+    requests:
+      storage: 100Gi

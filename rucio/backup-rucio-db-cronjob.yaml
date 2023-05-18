@@ -1,0 +1,34 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  # Backup the database every day at 2AM
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgres-backup
+            image: 192.168.50.97:5000/bitnami/postgresql:11
+            command: ["/bin/sh"]
+            args: ["-c", 'echo "rucio-restore-db-test-postgresql:5432:rucio:postgres:$PG_PASS" > /root/.pgpass && chmod 600 /root/.pgpass && pg_dump --exclude-table-data "test.*_history" -v -U postgres -h rucio-restore-db-test-postgresql  -p 5432 rucio > /var/backups/backup-$(date +"%m-%d-%Y-%H-%M").sql']
+            env:
+            - name: PG_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rucio-restore-db-test-postgresql
+                  key: postgresql-postgres-password 
+            volumeMounts:
+            - mountPath: /var/backups
+              name: postgres-storage
+          restartPolicy: Never
+          volumes:
+          - name: postgres-storage
+            hostPath:
+            # Ensure the file directory is created.
+              path: /dev-rucio-persistent-storage/postgres-db-backups/
+              type: DirectoryOrCreate
+          nodeSelector:
+            kubernetes.io/hostname: k8s-dev-worker-1

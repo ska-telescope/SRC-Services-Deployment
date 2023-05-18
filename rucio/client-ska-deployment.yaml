@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: rucio-ska-client
+  name: rucio-ska-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rucio-ska-client
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: rucio-ska-client
+    spec:
+      containers:
+      - name: client
+        image: registry.gitlab.com/ska-telescope/src/ska-rucio-client:release-1.28.0
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "mkdir -p /opt/rucio/etc; cp /tmp/certs/usercert /opt/rucio/etc/usercert.pem; cp /tmp/keys/userkey /opt/rucio/etc/userkey.pem; cp /tmp/proxy/x509up /opt/rucio/etc/x509up; /opt/rucio/etc/rucio_init.sh; while true; do echo hello; sleep 3;done"]
+        env:
+        - name: RUCIO_CFG_RUCIO_HOST
+          value: https://srcdev.skatelescope.org/rucio-dev 
+        - name: RUCIO_CFG_AUTH_HOST
+          value: https://srcdev.skatelescope.org/rucio-dev 
+        - name: RUCIO_CFG_AUTH_TYPE
+          value: oidc
+        - name: RUCIO_CFG_USERNAME
+          value: 
+        - name: RUCIO_CFG_PASSWORD
+          value: 
+        - name: RUCIO_CFG_ACCOUNT
+          value: 
+      volumes:
+      - name: ca
+        secret:
+          secretName: clients-rucio-ca-bundle
+          defaultMode: 0644
+status: {}

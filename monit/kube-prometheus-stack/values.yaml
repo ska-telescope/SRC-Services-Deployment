@@ -1,0 +1,76 @@
+grafana:
+  service:
+    port: 3000
+  env:
+    GF_RENDERING_SERVER_URL: http://grafana-image-renderer:8081/render
+    GF_RENDERING_CALLBACK_URL: http://prometheus-stack-grafana:3000
+    GF_LOG_FILTERS: rendering:debug
+  image:
+    repository: grafana/grafana-oss 
+    tag: 8.5.2
+    pullPolicy: IfNotPresent
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    hosts:
+      - monit.srcdev.skao.int
+    path: /grafana(/|$)(.*)
+  plugins:
+  - grafana-piechart-panel
+  - grafana-worldmap-panel
+  dashboardProviders: 
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+  dashboards:
+    default:
+      rucio-events:
+        url: https://gitlab.com/ska-telescope/src/ska-rucio-prototype/-/raw/691d3c1c88ad927f4a78fd6cb41f2c03151099bb/dev/monitoring/rucio-events.json
+  grafana.ini:
+    server:
+      domain: monit.srcdev.skao.int
+      root_url: https://monit.srcdev.skao.int/grafana
+      serve_from_sub_path: true
+      security:
+        disable_initial_admin_creation: true
+    auth.generic_oauth:
+      name: ska
+      enabled: true
+      allow_sign_up: true
+      client_id: 3d7403f1-dcf1-4220-8dc7-3d93da5fa55f
+      client_secret: cIiHonIeXOSafxF8lXJ2RDrxfYGdeuikXy0BUDyv9r3fy7EtU5q1P1oFsPbopTTyGNQas2qlPOeRkwS1_Ao-fQ
+      scopes: openid profile email
+      auth_url: https://ska-iam.stfc.ac.uk/authorize
+      token_url: https://ska-iam.stfc.ac.uk/token
+      api_url: https://ska-iam.stfc.ac.uk/userinfo
+      use_pkce: true
+      role_attribute_path: contains(groups[*], 'monitoring/grafana/admin') && 'Admin' || contains(groups[*], 'monitoring/grafana/viewer') && 'Viewer'
+      role_attribute_strict: true
+  additionalDataSources: 
+  - name: hermes2
+    access: proxy
+    database: hermes2
+    basicAuth: false
+    editable: false
+    jsonData:
+        sslmode: "disable"
+        esVersion: 70
+        timeField: "created_at"
+    orgId: 1
+    type: elasticsearch
+    url: https://srcdev.skatelescope.org/rucio-dev/monit/elastic/
+    version: 1
+    typeLogoUrl: public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg
+    isDefault: false
+    editable: true
