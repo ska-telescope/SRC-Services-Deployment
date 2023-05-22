@@ -1,0 +1,4 @@
+backend jupyterhub_srcdev
+    mode http
+    option forwardfor
+    server jupyterhub_srcdev 192.168.1.106:80

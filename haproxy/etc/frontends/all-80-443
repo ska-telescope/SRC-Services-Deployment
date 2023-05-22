@@ -8,12 +8,16 @@ frontend http-in
     acl monit_srcdev_basicauth path_beg /elastic 						# or'ed paths
     acl from-stfc src 130.246.214.244 130.246.215.182
     acl argocd_srcdev hdr_sub(host) -i argocd.srcdev.skao.int
+    acl jupyterhub_srcdev hdr_sub(host) -i jupyterhub.srcdev.skao.int
+    acl binderhub_srcdev hdr_sub(host) -i binderhub.srcdev.skao.int
 
     # *.srcdev
     use_backend sited_srcdev if site_directory_srcdev
     use_backend rucio_srcdev if rucio_srcdev
     use_backend monit_srcdev if monit_srcdev
     use_backend argocd_srcdev if argocd_srcdev
+    use_backend jupyterhub_srcdev if jupyterhub_srcdev
+    use_backend binderhub_srcdev if binderhub_srcdev
 
     http-request redirect scheme https code 301 if !{ ssl_fc }					# redirect https
     http-request auth if monit_srcdev_basicauth !{ http_auth(elasticcredentials) } !from-stfc	# present basic auth dialog for /elastic if not logged in and src is external
