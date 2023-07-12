@@ -4,6 +4,7 @@ createCert: false
 
 esConfig:
   elasticsearch.yml: |
+    reindex.remote.whitelist: srcdev.skatelescope.org:443
     xpack.security.enabled: false                 # enable authentication (requires http ssl to be set)
     xpack.security.http.ssl.enabled: false        # enable ssl for http 
     xpack.security.transport.ssl.enabled: false   # enable ssl for transport
@@ -19,18 +20,13 @@ ingress:
       paths: 
         - path: /elastic(/|$)(.*)
 
-reindex:
-  remote:
-    whitelist:
-      - "srcdev.skatelescope.org:443"
-
 secret:
   enabled: true                                   # use following creds (rather than secret) if xpack.security.enable is set
   password: C7XUnyZuYfd9ECtioHFhntLP6
 
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: "csi-cinder-sc-delete"
+  storageClassName: "csi-cinder-sc-retain"
   resources:
     requests:
       storage: 100Gi
