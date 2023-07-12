@@ -1,0 +1,38 @@
+binderhub:
+  registry:
+    username: "srcdev"
+    password: "dckr_pat_pWzDrMLW7_V0lwgZ9irULixgxRI"
+  config:
+    BinderHub:
+      hub_url: https://jupyterhub.srcdev.skao.int/
+      base_url: /
+  jupyterhub:
+    hub:
+      config:
+        GenericOAuthenticator:
+          client_id: "a5abd5ee-d106-4794-8e22-e80974e9a954"
+          client_secret: "PXJcd53bfKW2a3opyHxsPvDAL4gt8ZCdGU_TMYTegkTHoJpriBawErIZLkw7pahvze8kGGmmjdD8FzAJZ0P_pA"
+          oauth_callback_url: "https://jupyterhub.srcdev.skao.int/hub/oauth_callback"
+      services:
+        binder:
+          oauth_redirect_uri: "https://binderhub.srcdev.skao.int/oauth_callback"
+      db:
+        pvc:
+          storageClassName: csi-cinder-sc-retain
+    singleuser:
+      profileList:
+      - display_name: "Default environment"
+        description: "Default Jupyter Notebook environment"
+      - display_name: "Pangeo base"
+        description: "Includes Dask Gateway"
+        kubespawner_override:
+          image: pangeo/base-notebook:2023.02.27
+      - display_name: "SDC1 Solution"
+        description: "An Ubuntu 18.04 based image with Python 3.7"
+        kubespawner_override:
+          image: registry.gitlab.com/ska-telescope/sdc/sdc1-solution:scipy-nb-ubuntu18
+      - display_name: "Mosaicking - SWARP"
+        description: "Mosaicking with SWARP"
+        kubespawner_override:
+          image: registry.gitlab.com/ska-telescope/src/src-scientific-use-cases/swarp-mosaicking-jupyter:latest
+           
