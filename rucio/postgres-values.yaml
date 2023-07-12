@@ -1,10 +1,14 @@
+image:
+  tag: 15.3.0-debian-11-r0
+
 auth:
   username: rucio
   password: secret
   database: rucio
+  existingSecret: null
 
 primary:
   persistence:
     enabled: true
-    storageClass: csi-cinder-sc-delete
+    storageClass: csi-cinder-sc-retain
     size: 250Gi

@@ -3,7 +3,7 @@ authReplicaCount: 1
 traceReplicaCount: 1
 
 image:
-  repository: 192.168.50.97:5000/rucio/rucio-server
+  repository: 130.246.213.80:5000/rucio/rucio-server
   tag: release-1.29.6-policy
   pullPolicy: Always 
 
@@ -38,8 +38,8 @@ optional_config:
 
 config:
   database:
-    default: "postgresql://rucio:secret@rucio-restore-db-test-postgresql/rucio"
-    schema: "test"
+    default: "postgresql://rucio:secret@rucio-postgres-postgresql/rucio"
+    schema: "rucio"
   trace:
     tracedir: "/var/log/rucio/trace"
     username: ""
@@ -48,6 +48,16 @@ config:
     idpsecrets: "/etc/idpsecrets/idpsecrets.json"
     admin_issuer: "escape"
     expected_audience: "https://wlcg.cern.ch/jwt/v1/any"
+  metadata:
+    plugins: "rucio.core.did_meta_plugins.postgres_meta.ExternalPostgresJSONDidMeta"
+    postgres_service_host: "postgres-metadata-postgresql"
+    postgres_service_port: 5432
+    postgres_db: "metadata"
+    postgres_user: "gavoadmin"
+    postgres_password: ""
+    postgres_db_schema: "rucio"
+    postgres_table: "dids"
+    postgres_table_is_managed: True
 
 useSSL:
   server: false
@@ -82,15 +92,9 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    # nginx.ingress.kubernetes.io/rewrite-target: /$2
-    # kubernetes.io/ingress.class: traefik
-    # traefik.ingress.kubernetes.io/frontend-entry-points: http
-    # traefik.ingress.kubernetes.io/redirect-entry-point: https
   path: /
   hosts:
-    - srcdev.skatelescope.org
-  #  - src-proxy
-  #  - server-rucio-server
+    - rucio.srcdev.skao.int
   tls:
     - secretName: rucio-server.tls-secret
 
@@ -99,28 +103,9 @@ authIngress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /auth/$2
-    # kubernetes.io/ingress.class: traefik
-    # traefik.ingress.kubernetes.io/frontend-entry-points: http
-    # traefik.ingress.kubernetes.io/redirect-entry-point: https
   path: /auth(/|$)(.*)
   hosts: 
-  #  - src-proxy
-  #  - server-rucio-server-auth
-    - srcdev.skatelescope.org
-  tls:
-    - secretName: rucio-server.tls-secret
-
-authIngress:
-  enabled: true
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /traces/$2
-    # kubernetes.io/ingress.class: traefik
-    # traefik.ingress.kubernetes.io/frontend-entry-points: http
-    # traefik.ingress.kubernetes.io/redirect-entry-point: https
-  path: /traces(/|$)(.*)
-  hosts:
-    - srcdev.skatelescope.org
+    - rucio.srcdev.skao.int
   tls:
     - secretName: rucio-server.tls-secret
 

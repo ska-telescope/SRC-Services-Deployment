@@ -36,7 +36,7 @@ grafana:
   dashboards:
     default:
       rucio-events:
-        url: https://gitlab.com/ska-telescope/src/ska-rucio-prototype/-/raw/691d3c1c88ad927f4a78fd6cb41f2c03151099bb/dev/monitoring/rucio-events.json
+        url: https://gitlab.com/ska-telescope/src/ska-rucio-prototype/-/raw/migration-to-gitops/dev/monitoring/rucio-events.json
   grafana.ini:
     server:
       domain: monit.srcdev.skao.int
@@ -55,7 +55,7 @@ grafana:
       token_url: https://ska-iam.stfc.ac.uk/token
       api_url: https://ska-iam.stfc.ac.uk/userinfo
       use_pkce: true
-      role_attribute_path: contains(groups[*], 'monitoring/grafana/admin') && 'Admin' || contains(groups[*], 'monitoring/grafana/viewer') && 'Viewer'
+      role_attribute_path: contains(groups[*], 'monitoring/grafana/admin') && 'Admin' || contains(groups[*], 'monitoring/grafana/editor') && 'Editor' || contains(groups[*], 'monitoring/grafana/viewer') && 'Viewer'
       role_attribute_strict: true
   additionalDataSources: 
   - name: hermes2
@@ -65,11 +65,11 @@ grafana:
     editable: false
     jsonData:
         sslmode: "disable"
-        esVersion: 70
+        esVersion: 80
         timeField: "created_at"
     orgId: 1
     type: elasticsearch
-    url: https://srcdev.skatelescope.org/rucio-dev/monit/elastic/
+    url: https://monit.srcdev.skao.int/elastic/
     version: 1
     typeLogoUrl: public/app/plugins/datasource/elasticsearch/img/elasticsearch.svg
     isDefault: false

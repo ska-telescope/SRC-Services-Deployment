@@ -4,7 +4,7 @@ conveyorTransferSubmitterCount: 2
 conveyorPollerCount: 2
 conveyorFinisherCount: 2
 hermesCount: 0
-hermes2Count: 0
+hermes2Count: 2
 judgeCleanerCount: 1
 judgeEvaluatorCount: 1
 judgeInjectorCount: 1
@@ -15,12 +15,12 @@ transmogrifierCount: 1
 oauthManagerCount: 1
 
 image:
-  repository: 192.168.50.97:5000/rucio/rucio-daemons
+  repository: 130.246.213.80:5000/rucio/rucio-daemons
   tag: release-1.29.6-finisher-bulk-bodge-sdc3a-no-updated-collection-replica-update-2
   pullPolicy: Always
 
 automaticRestart:
-  enabled: 1
+  enabled: 0
   image:
     repository: bitnami/kubectl
     tag: 1.18
@@ -202,10 +202,10 @@ config:
     admin_issuer: "escape"
     expected_audience: "https://wlcg.cern.ch/jwt/v1/any"
   database:
-    default: postgresql://rucio:secret@rucio-restore-db-test-postgresql/rucio
-    schema: test
+    default: "postgresql://rucio:secret@rucio-postgres-postgresql/rucio"
+    schema: rucio
   messaging_hermes2:
-    elastic_endpoint: https://srcdev.skatelescope.org/rucio-dev/monit/elastic/hermes2/_bulk/
+    elastic_endpoint: https://monit.srcdev.skao.int/elastic/hermes2/_bulk/
   
   conveyor:
     scheme: "gsiftp,root,https,davs"

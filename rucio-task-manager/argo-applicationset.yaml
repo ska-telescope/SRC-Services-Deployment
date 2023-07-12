@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rucio-task-manager
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://gitlab.com/ska-telescope/src/ska-rucio-prototype.git
+      revision: migration-to-gitops
+      files:
+      - path: 'dev/rucio-task-manager.values.yaml'
+  template:
+    metadata:
+      name: rucio-task-manager
+    spec:
+      project: default
+      source:
+        helm:
+          values: |-
+            {{values}}
+        repoURL: https://gitlab.com/api/v4/projects/38166490/packages/helm/stable
+        targetRevision: 1.1.2
+        chart: rucio-task-manager
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: rucio-task-manager
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+
