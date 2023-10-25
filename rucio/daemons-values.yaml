@@ -61,7 +61,7 @@ abacusRse:
       cpu: "50m"
 
 reaper:
-  chunkSize: 500
+  chunkSize: 5000
   greedy: 1
   threads: 1 
   sleepTime: 15

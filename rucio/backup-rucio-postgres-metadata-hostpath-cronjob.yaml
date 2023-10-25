@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rucio-postgres-metadata-backup
+  namespace: rucio
+spec:
+  # Backup the database every day at 2AM
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: rucio-postgres-metadata-backup
+            image: 130.246.213.80:5000/bitnami/postgresql:15.3.0-debian-11-r0
+            command: ["/bin/sh"]
+            args: ["-c", 'pg_dump --dbname=postgresql://postgres:$PG_PASS@postgres-metadata-postgresql:5432/metadata -v > /tmp/backups/metadata-backup-$(date +"%m-%d-%Y-%H-%M").sql']
+            env:
+            - name: PG_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-metadata-postgresql
+                  key: postgres-password 
+            volumeMounts:
+            - mountPath: /tmp/backups
+              name: postgres-backups
+          restartPolicy: Never
+          volumes:
+          - name: postgres-backups
+            hostPath:
+            # Ensure the file directory is created and has the correct permissions.
+              path: /backups
+              type: DirectoryOrCreate
+          nodeSelector:
+            kubernetes.io/hostname: srcnet-workload-1-md-0-68nhg

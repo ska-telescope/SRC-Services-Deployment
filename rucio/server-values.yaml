@@ -57,7 +57,7 @@ config:
     postgres_password: ""
     postgres_db_schema: "rucio"
     postgres_table: "dids"
-    postgres_table_is_managed: True
+    postgres_table_is_managed: False
 
 useSSL:
   server: false

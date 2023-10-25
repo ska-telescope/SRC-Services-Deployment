@@ -1,0 +1,17 @@
+image_registry_url: registry.gitlab.com/ska-telescope/src/src-service-apis/ska-src-permissions-api/api
+image_tag: permissions.srcdev.skao.int
+svc:
+  api:
+    root_path: /api
+    iam_client_id: ff02aca2-dc21-49d8-998a-337eb8aedf1a
+    iam_client_secret: AIAJUmatbNufaX_Jbjeybx3Am0QZXCrlkmo6tQoZESh9hkNjL5Uo8ur0pBVJiuU8UKb1sSDsgeElKRZD_F3Nu70
+    iam_client_scopes: openid profile
+    iam_client_audience: permissions-api
+    iam_client_conf_url: https://ska-iam.stfc.ac.uk/.well-known/openid-configuration
+    permissions_root_group_name: services
+    permissions_relpath: ../../../etc/permissions
+    permissions_include_policies_fqn: "site-capabilities-api.v1,data-management-api.v1"
+    schemas_relpath: ../../../etc/schemas
+ing:
+  api:
+    host: permissions.srcdev.skao.int

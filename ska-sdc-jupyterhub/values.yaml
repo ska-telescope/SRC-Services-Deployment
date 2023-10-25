@@ -17,8 +17,9 @@ binderhub:
         binder:
           oauth_redirect_uri: "https://binderhub.srcdev.skao.int/oauth_callback"
       db:
-        pvc:
-          storageClassName: csi-cinder-sc-retain
+        type: sqlite-memory
+        #pvc:
+        #  storageClassName: csi-cinder-sc-retain
     singleuser:
       profileList:
       - display_name: "Default environment"
@@ -31,8 +32,34 @@ binderhub:
         description: "An Ubuntu 18.04 based image with Python 3.7"
         kubespawner_override:
           image: registry.gitlab.com/ska-telescope/sdc/sdc1-solution:scipy-nb-ubuntu18
-      - display_name: "Mosaicking - SWARP"
-        description: "Mosaicking with SWARP"
+      - display_name: "Image co-adding - SWARP"
+        description: "Image co-adding with SWARP: https://gitlab.com/ska-telescope/src/src-workloads/-/tree/master/tasks/image-coadding-SWARP"
         kubespawner_override:
-          image: registry.gitlab.com/ska-telescope/src/src-scientific-use-cases/swarp-mosaicking-jupyter:latest
-
+          image: registry.gitlab.com/ska-telescope/src/src-workloads/image-coadding-swarp-jupyter:0.0.1
+      - display_name: "Mosaicking - SWARP"
+        description: "Mosaicking with SWARP: https://gitlab.com/ska-telescope/src/src-workloads/-/tree/master/tasks/mosaicking-SWARP"
+        kubespawner_override:
+          image: registry.gitlab.com/ska-telescope/src/src-workloads/mosaicking-swarp-jupyter:0.0.2
+      - display_name: "Source finding"
+        description: "Source finding with PyBDSF: https://gitlab.com/ska-telescope/src/src-workloads/-/tree/master/tasks/source-finding-PYBDSF"
+        kubespawner_override:
+          image: registry.gitlab.com/ska-telescope/src/src-workloads/source-finding-pybdsf-jupyter:0.0.3
+      - display_name: "ipyaladin Environment"
+        description: "Scipy notebook with ipyaladin 0.2.5 installed"
+        kubespawner_override:
+          image: 130.246.213.80:5000/scipy-notebook-ipyaladin:0.0.1
+      - display_name: "Dask-Rucio-IVOA Demo notebook"
+        description: "Built on minimal-notebook"
+        kubespawner_override:
+          image: registry.gitlab.com/ska-telescope/src/src-workloads/distributed-analysis-dask-jupyter:0.0.1
+      - display_name: "VSCode IDE"
+        description: "Prototype IDE environment developed by LAPP"
+        kubespawner_override:
+          default_url: /vscode
+          image: gitlab-registry.in2p3.fr/must/kubernetes/jupyter-environments/vscode:latest
+dask-gateway:
+  gateway:
+    backend:
+      image:
+        name: registry.gitlab.com/ska-telescope/src/src-workloads/distributed-analysis-dask-gateway-backend
+        tag: 0.0.1

@@ -1,0 +1,17 @@
+image_registry_url: registry.gitlab.com/ska-telescope/src/src-service-apis/ska-src-authn-api/api
+image_tag: authn.srcdev.skao.int
+svc:
+  api:
+    root_path: /api
+    iam_client_id: cd5ed1d2-e551-4677-ade1-81b4b40fec1d
+    iam_client_secret: ANZdtEiYfNonHBhS9WEBPrVU44zs14QuVSzBEzo7zr4y99CAXljkiMLLIFCF_0wJ35kykXMQlMp8MVRCFxniSM0
+    iam_client_scopes: openid profile offline_access
+    iam_client_audience: authn-api
+    iam_client_conf_url: https://ska-iam.stfc.ac.uk/.well-known/openid-configuration
+    cache_type: redis
+    cache_host: cache
+    cache_port: 6379
+    permissions_api_url: https://permissions.srcdev.skao.int/api/v1
+ing:
+  api:
+    host: authn.srcdev.skao.int

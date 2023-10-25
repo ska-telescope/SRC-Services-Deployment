@@ -1,0 +1,70 @@
+# POSIX Mapper web service deployment
+deployment:
+  hostname: canfar.srcdev.skao.int    # Change this!
+  skaha:
+    # Optionally set the DEBUG port.
+    # extraEnv:
+    # - name: CATALINA_OPTS
+    #   value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5555"
+    # - name: JAVA_OPTS
+    #   value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5555"
+
+    # Uncomment to debug.  Requires options above as well as service port exposure below.
+    # extraPorts:
+    # - containerPort: 5555
+    #   protocol: TCP
+
+    # Resources provided to the Skaha service.
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+
+    # Directory to hold the user's home folders in the shared storage.
+    homeDir: "/arc/home"
+
+    maxUserSessions: "3"
+    sessionExpiry: "345600"
+    defaultQuotaGB: "10"
+
+    # Space delimited list of allowed Image Registry hosts.  These hosts should match the hosts in the User Session images.
+    registryHosts: "images.canfar.net"
+
+    # The group name to verify users against for permission to use the Science Platform.
+    usersGroup: "ivo://skao.int/gms?prototyping-groups/mini-src/platform-users"
+
+    # The Resource ID of the Service that contains the Posix Mapping information
+    posixMapperResourceID: "ivo://opencadc.org/posix-mapper"
+    registryURL: https://spsrc27.iaa.csic.es/reg
+
+    # Optionally mount a custom CA certificate
+    # extraVolumeMounts:
+    # - mountPath: "/config/cacerts"
+    #   name: cacert-volume
+
+    # Create the CA certificate volume to be mounted in extraVolumeMounts
+    # extraVolumes:
+    # - name: cacert-volume
+    #   secret:
+    #     defaultMode: 420
+    #     secretName: posix-manager-cacert-secret
+
+secrets:
+  # Uncomment to enable local or self-signed CA certificates for your domain to be trusted.
+#   posix-manager-cacert-secret:
+#     ca.crt: <base64 encoded ca crt>
+
+storage:
+  service:
+    spec:
+      # YAML for service mounted storage
+      persistentVolumeClaim:
+        claimName: skaha-pvc
+
+# An omission equals true, so set this explicitly to false as we already installed it.
+posixmapper:
+    install: false
+    # Supports all of the posix-mapper/values.yaml options here.

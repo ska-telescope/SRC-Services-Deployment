@@ -1,0 +1,35 @@
+image_registry_url: registry.gitlab.com/ska-telescope/src/src-service-apis/ska-src-data-management-api/api
+image_tag: data-management.srcdev.skao.int
+svc:
+  api:
+    root_path: /api
+    scheme: https
+    iam_client_conf_url: https://ska-iam.stfc.ac.uk/.well-known/openid-configuration
+    iam_client_id: 0ab39d2f-5428-484b-815d-dadfbad17416
+    iam_client_secret: ANz1wtXwiJMiS6YdGOH-rzy6ebkXXCgGkCyWT0JGWHGjPJia4xYzo3ZFbBi_Jmdppbd9dGOUyCHHLwTKKB0UtkM
+    iam_client_scopes: "openid profile"
+    iam_client_audience: data-management-api
+    permissions_api_url: https://permissions.srcdev.skao.int/api/v1
+    permissions_service_name: data-management-api
+    permissions_service_version: 1
+    schemas_relpath: ../../../etc/schemas
+    metadata_schema_name: metadata.json
+    site_capabilities_url: https://site-capabilities.srcdev.skao.int/api/v1
+    site_capabilities_client_id: 1f901a38-955f-4198-aedb-002332a3c551
+    site_capabilities_client_secret: AJgdVrIQzQ8-KOVEELfoy285gimOQWRoYUWoRbCqN0IkSlqCbBFKIIsBJIaRGNsrdIu5U74yeEi80NcTIqPcUuY
+    site_capabilities_client_scopes: openid profile site-capabilities-api-service
+    site_capabilities_client_audience: site-capabilities-api
+    geoip_license_key: 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
+    rucio_host_url: https://rucio.srcdev.skao.int/
+    rucio_iam_token_endpoint: https://iam-escape.cloud.cnaf.infn.it/token
+    rucio_admin_client_id: 5313fe03-ad7f-4094-99af-f93d173cebb4
+    rucio_admin_client_secret: APA5EE1IzDQ6UjHQ3q_zdp9N7FCELTB_FwPmgoBzTXDXc6WExXu7uj2M9XaMxEFjbIUbKRa_xYP4D9fRKmCUVp8
+    rucio_admin_client_scopes: openid profile offline_access wlcg.groups
+    rucio_admin_client_audience: rucio https://wlcg.cern.ch/jwt/v1/any
+    cache_type: redis
+    cache_host: cache
+    cache_port: 6379
+ing:
+  api:
+    host: data-management.srcdev.skao.int
+
